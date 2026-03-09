@@ -43,9 +43,10 @@ jobs:
         if: steps.check_leethub.outputs.should_run == 'true'
         run: |
           EXCLUDE_DIRS=("LeetCode" "백준" "프로그래머스" ".github")
-          NEW_DIRS=$(git diff --name-only HEAD~1 HEAD | awk -F/ 'NF==2 {print $1}' | sort -u)
 
-          for DIR in $NEW_DIRS; do
+          # 루트에 존재하는 디렉토리 중 제외 목록에 없는 것을 탐색
+          for DIR in */; do
+            DIR="${DIR%/}"
             SKIP=false
             for EX in "${EXCLUDE_DIRS[@]}"; do
               if [[ "$DIR" == "$EX" ]]; then
@@ -55,7 +56,7 @@ jobs:
             done
 
             if [[ "$SKIP" == false ]]; then
-              echo "새로 추가된 문제풀이 패키지명: $DIR"
+              echo "루트에 위치한 문제풀이 패키지 발견: $DIR"
               echo "PACKAGE_NAME=$DIR" >> $GITHUB_OUTPUT
               break
             fi
@@ -108,26 +109,33 @@ jobs:
           echo "옮겨야 할 패키지 확인: $PACKAGE_NAME"
           echo "감지된 레벨: $LEVEL_DIRECTORY"
      
-          # 먼저 기존에 동일한 디렉토리 위치가 있는지 탐색
+          # 기존에 동일한 디렉토리가 있는지 탐색 (flat 또는 난이도 서브폴더)
           FOUND_EXISTING_PATH=""
-          for dir in "$ROOT_DIR"/*; do
-            if [ -d "$dir/$PACKAGE_NAME" ]; then
-              FOUND_EXISTING_PATH="$dir"
-              echo "기존 디렉토리 발견: $dir/$PACKAGE_NAME"
-              break
-            fi
-          done
-     
-          # 기존 위치로 이동
+          # 1) LeetCode/패키지명 (flat 구조)
+          if [ -d "$ROOT_DIR/$PACKAGE_NAME" ]; then
+            FOUND_EXISTING_PATH="$ROOT_DIR"
+            echo "기존 디렉토리 발견 (flat): $ROOT_DIR/$PACKAGE_NAME"
+          else
+            # 2) LeetCode/난이도/패키지명 (서브폴더 구조)
+            for dir in "$ROOT_DIR"/*/; do
+              if [ -d "${dir}$PACKAGE_NAME" ]; then
+                FOUND_EXISTING_PATH="${dir%/}"
+                echo "기존 디렉토리 발견: ${dir}$PACKAGE_NAME"
+                break
+              fi
+            done
+          fi
+
+          # 기존 위치로 병합 이동
           if [ -n "$FOUND_EXISTING_PATH" ]; then
             DEST="$FOUND_EXISTING_PATH/$PACKAGE_NAME"
             echo "→ 기존 디렉토리로 병합 이동: $DEST"
-            mv "$PACKAGE_NAME"/* "$DEST"/
-            rmdir "$PACKAGE_NAME" || true
-     
+            cp -r "$PACKAGE_NAME"/* "$DEST"/
+            rm -rf "$PACKAGE_NAME"
+
           # 새로 이동해야 할 경우
           else
-           DEST="$ROOT_DIR/$LEVEL_DIRECTORY/$PACKAGE_NAME"
+            DEST="$ROOT_DIR/$LEVEL_DIRECTORY/$PACKAGE_NAME"
             echo "→ 새 디렉토리로 이동: $DEST"
             mkdir -p "$ROOT_DIR/$LEVEL_DIRECTORY"
             mv "$PACKAGE_NAME" "$ROOT_DIR/$LEVEL_DIRECTORY/"
