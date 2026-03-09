@@ -67,12 +67,15 @@ jobs:
         run: |
           PACKAGE_NAME="${{ steps.detect_package.outputs.PACKAGE_NAME }}"
           README_PATH="$PACKAGE_NAME/README.md"
-         
+
           if [ ! -f "$README_PATH" ]; then
             echo "README.md 파일 없음 ❌"
             echo "leetcode_level=Unknown" >> $GITHUB_OUTPUT
             exit 0
           fi
+
+          echo "README 내용 확인:"
+          cat "$README_PATH" | head -5
 
           # h3 태그 안에서 난이도 추출
           LEVEL=$(grep -oP '(?<=<h3>).*?(?=</h3>)' "$README_PATH" | head -n 1)
@@ -131,13 +134,13 @@ jobs:
           fi
 
       - name: Commit and Push
+        env:
+          COMMIT_MSG: ${{ needs.detect.outputs.commit_msg }}
         run: |
-          COMMIT_MSG="${{ needs.detect.outputs.commit_msg }}"
-          echo "커밋 메세지 확인: $COMMIT_MSG"
-       
           git config --global user.name gisu1102
           git config --global user.email gisu1102@gmail.com
 
           git add .
           git commit -m "$COMMIT_MSG" || echo "No changes to commit"
+          git pull --rebase origin main
           git push
