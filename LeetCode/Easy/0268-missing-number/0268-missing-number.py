@@ -9,11 +9,17 @@ class Solution:
         #     cnt += 1
         # return(cnt)
         
-        nums.sort()
+        # nums.sort()
 
-        for i,v in enumerate(nums):
-            if (i != v):
-                return v-1
+        # for i,v in enumerate(nums):
+        #     if (i != v):
+        #         return v-1
             
-            if v == len(nums)-1:
-                return v+1
+        #     if v == len(nums)-1:
+        #         return v+1
+
+        # 0 1 2 (3) 
+        # 3 ,6 
+        # 0 1 3 
+        # 4 6
+        return sum(range(0, len(nums)+1)) - sum(nums)
