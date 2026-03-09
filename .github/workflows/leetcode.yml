@@ -109,21 +109,22 @@ jobs:
           echo "옮겨야 할 패키지 확인: $PACKAGE_NAME"
           echo "감지된 레벨: $LEVEL_DIRECTORY"
      
-          # 기존에 동일한 디렉토리가 있는지 탐색 (flat 또는 난이도 서브폴더)
+          # 기존에 동일한 디렉토리가 있는지 탐색
           FOUND_EXISTING_PATH=""
-          # 1) LeetCode/패키지명 (flat 구조)
-          if [ -d "$ROOT_DIR/$PACKAGE_NAME" ]; then
-            FOUND_EXISTING_PATH="$ROOT_DIR"
-            echo "기존 디렉토리 발견 (flat): $ROOT_DIR/$PACKAGE_NAME"
-          else
-            # 2) LeetCode/난이도/패키지명 (서브폴더 구조)
-            for dir in "$ROOT_DIR"/*/; do
-              if [ -d "${dir}$PACKAGE_NAME" ]; then
-                FOUND_EXISTING_PATH="${dir%/}"
-                echo "기존 디렉토리 발견: ${dir}$PACKAGE_NAME"
-                break
-              fi
-            done
+          for dir in "$ROOT_DIR"/*/; do
+            if [ -d "${dir}$PACKAGE_NAME" ]; then
+              FOUND_EXISTING_PATH="${dir%/}"
+              echo "기존 디렉토리 발견: ${dir}$PACKAGE_NAME"
+              break
+            fi
+          done
+
+          # flat 구조(LeetCode/패키지명)가 있으면 먼저 서브폴더로 이동
+          if [ -d "$ROOT_DIR/$PACKAGE_NAME" ] && [ -z "$FOUND_EXISTING_PATH" ]; then
+            echo "flat 구조 감지 → 서브폴더 구조로 변환: $ROOT_DIR/$LEVEL_DIRECTORY/$PACKAGE_NAME"
+            mkdir -p "$ROOT_DIR/$LEVEL_DIRECTORY"
+            mv "$ROOT_DIR/$PACKAGE_NAME" "$ROOT_DIR/$LEVEL_DIRECTORY/"
+            FOUND_EXISTING_PATH="$ROOT_DIR/$LEVEL_DIRECTORY"
           fi
 
           # 기존 위치로 병합 이동
