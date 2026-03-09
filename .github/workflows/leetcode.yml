@@ -90,7 +90,7 @@ jobs:
           done
           echo "최종 난이도: $LEVEL"
 
-          # 3. 기존 디렉토리 탐색 및 이동
+          # 3. 기존 디렉토리 탐색
           FOUND_EXISTING_PATH=""
           for dir in "$ROOT_DIR"/*/; do
             if [ -d "${dir}$PACKAGE_NAME" ]; then
@@ -108,14 +108,24 @@ jobs:
             FOUND_EXISTING_PATH="$ROOT_DIR/$LEVEL"
           fi
 
-          # 기존 위치로 병합 이동
+          # 기존 디렉토리가 잘못된 난이도 폴더에 있으면 올바른 위치로 이동
+          CORRECT_PATH="$ROOT_DIR/$LEVEL"
+          if [ -n "$FOUND_EXISTING_PATH" ] && [ "$FOUND_EXISTING_PATH" != "$CORRECT_PATH" ]; then
+            echo "난이도 불일치: $FOUND_EXISTING_PATH → $CORRECT_PATH 로 재배치"
+            mkdir -p "$CORRECT_PATH"
+            mv "$FOUND_EXISTING_PATH/$PACKAGE_NAME" "$CORRECT_PATH/"
+            # 기존 난이도 폴더가 비었으면 삭제
+            rmdir "$FOUND_EXISTING_PATH" 2>/dev/null || true
+            FOUND_EXISTING_PATH="$CORRECT_PATH"
+          fi
+
+          # 4. 루트 패키지를 목적지로 이동
           if [ -n "$FOUND_EXISTING_PATH" ]; then
             DEST="$FOUND_EXISTING_PATH/$PACKAGE_NAME"
             echo "→ 기존 디렉토리로 병합 이동: $DEST"
             cp -r "$PACKAGE_NAME"/* "$DEST"/
             rm -rf "$PACKAGE_NAME"
           else
-            # 새로 이동
             DEST="$ROOT_DIR/$LEVEL/$PACKAGE_NAME"
             echo "→ 새 디렉토리로 이동: $DEST"
             mkdir -p "$ROOT_DIR/$LEVEL"
