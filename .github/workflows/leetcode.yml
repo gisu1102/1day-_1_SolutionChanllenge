@@ -8,19 +8,15 @@ permissions:
   contents: write
 
 jobs:
-  detect:
+  leethub:
     runs-on: ubuntu-latest
-    outputs:
-      should_run: ${{ steps.check_leethub.outputs.should_run }}
-      package_name: ${{ steps.detect_package.outputs.PACKAGE_NAME }}
-      commit_msg: ${{ steps.check_leethub.outputs.commit_msg }}
-      level: ${{ steps.extract_level.outputs.leetcode_level }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 2 # 이전 로그 2개까지 해서 변경점 비교(디폴트는 1.)
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2
 
       - name: Check if LeetHub Commit
         id: check_leethub
@@ -31,20 +27,22 @@ jobs:
           if [[ "$COMMIT_MSG" == Time:* && "$COMMIT_MSG" == *"- LeetHub" ]]; then
             echo "should_run=true" >> $GITHUB_OUTPUT
             echo "commit_msg=${COMMIT_MSG}" >> $GITHUB_OUTPUT
-            echo "LeetHub 커밋 확인, 패키지 이사 작업 준비 ✅"
+            echo "LeetHub 커밋 확인 ✅"
           else
             echo "should_run=false" >> $GITHUB_OUTPUT
-            echo "commit_msg=" >> $GITHUB_OUTPUT
-            echo "작업 없이 패스하면 됩니다 ❌"
+            echo "LeetHub 커밋 아님, 스킵 ❌"
           fi
 
-      - name: Detect New Solve Package
-        id: detect_package
+      - name: Detect and Move Package
         if: steps.check_leethub.outputs.should_run == 'true'
+        env:
+          COMMIT_MSG: ${{ steps.check_leethub.outputs.commit_msg }}
         run: |
           EXCLUDE_DIRS=("LeetCode" "백준" "프로그래머스" ".github")
+          ROOT_DIR="LeetCode"
+          PACKAGE_NAME=""
 
-          # 루트에 존재하는 디렉토리 중 제외 목록에 없는 것을 탐색
+          # 1. 루트에 존재하는 문제풀이 패키지 탐색
           for DIR in */; do
             DIR="${DIR%/}"
             SKIP=false
@@ -54,62 +52,45 @@ jobs:
                 break
               fi
             done
-
             if [[ "$SKIP" == false ]]; then
-              echo "루트에 위치한 문제풀이 패키지 발견: $DIR"
-              echo "PACKAGE_NAME=$DIR" >> $GITHUB_OUTPUT
+              PACKAGE_NAME="$DIR"
+              echo "루트에 위치한 문제풀이 패키지 발견: $PACKAGE_NAME"
               break
             fi
           done
 
-      - name: Extract Level from README
-        id: extract_level
-        if: steps.check_leethub.outputs.should_run == 'true' && steps.detect_package.outputs.PACKAGE_NAME != ''
-        run: |
-          PACKAGE_NAME="${{ steps.detect_package.outputs.PACKAGE_NAME }}"
-          README_PATH="$PACKAGE_NAME/README.md"
-
-          if [ ! -f "$README_PATH" ]; then
-            echo "README.md 파일 없음 ❌"
-            echo "leetcode_level=Unknown" >> $GITHUB_OUTPUT
+          if [ -z "$PACKAGE_NAME" ]; then
+            echo "이동할 패키지 없음, 스킵"
             exit 0
           fi
 
-          echo "README 내용 확인:"
-          cat "$README_PATH" | head -5
+          # 2. 난이도 추출 (루트 패키지 → 기존 LeetCode 디렉토리 순서로 README 탐색)
+          LEVEL="Unknown"
+          README_CANDIDATES=(
+            "$PACKAGE_NAME/README.md"
+            "$ROOT_DIR/$PACKAGE_NAME/README.md"
+          )
+          # LeetCode/*/패키지명/README.md 도 탐색
+          for dir in "$ROOT_DIR"/*/; do
+            if [ -f "${dir}$PACKAGE_NAME/README.md" ]; then
+              README_CANDIDATES+=("${dir}$PACKAGE_NAME/README.md")
+            fi
+          done
 
-          # h3 태그 안에서 난이도 추출
-          LEVEL=$(grep -oP '(?<=<h3>).*?(?=</h3>)' "$README_PATH" | head -n 1)
+          for README_PATH in "${README_CANDIDATES[@]}"; do
+            if [ -f "$README_PATH" ]; then
+              echo "README 발견: $README_PATH"
+              EXTRACTED=$(grep -oP '(?<=<h3>).*?(?=</h3>)' "$README_PATH" | head -n 1)
+              if [ -n "$EXTRACTED" ]; then
+                LEVEL="$EXTRACTED"
+                echo "난이도 추출 성공: $LEVEL"
+                break
+              fi
+            fi
+          done
+          echo "최종 난이도: $LEVEL"
 
-          # 없으면 fallback
-          if [ -z "$LEVEL" ]; then
-            LEVEL="Unknown"
-          fi
-
-          echo "LeetCode 문제 난이도: $LEVEL"
-          echo "leetcode_level=$LEVEL" >> $GITHUB_OUTPUT
-
-  move:
-    needs: detect
-    if: ${{ needs.detect.outputs.should_run == 'true' && needs.detect.outputs.package_name != '' }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-         
-      - name: Move Directory
-        run: |
-          PACKAGE_NAME="${{ needs.detect.outputs.PACKAGE_NAME }}"
-          LEVEL_DIRECTORY="${{ needs.detect.outputs.level }}"
-          ROOT_DIR="LeetCode"
-     
-          echo "옮겨야 할 패키지 확인: $PACKAGE_NAME"
-          echo "감지된 레벨: $LEVEL_DIRECTORY"
-     
-          # 기존에 동일한 디렉토리가 있는지 탐색
+          # 3. 기존 디렉토리 탐색 및 이동
           FOUND_EXISTING_PATH=""
           for dir in "$ROOT_DIR"/*/; do
             if [ -d "${dir}$PACKAGE_NAME" ]; then
@@ -119,12 +100,12 @@ jobs:
             fi
           done
 
-          # flat 구조(LeetCode/패키지명)가 있으면 먼저 서브폴더로 이동
+          # flat 구조(LeetCode/패키지명) → 서브폴더로 변환
           if [ -d "$ROOT_DIR/$PACKAGE_NAME" ] && [ -z "$FOUND_EXISTING_PATH" ]; then
-            echo "flat 구조 감지 → 서브폴더 구조로 변환: $ROOT_DIR/$LEVEL_DIRECTORY/$PACKAGE_NAME"
-            mkdir -p "$ROOT_DIR/$LEVEL_DIRECTORY"
-            mv "$ROOT_DIR/$PACKAGE_NAME" "$ROOT_DIR/$LEVEL_DIRECTORY/"
-            FOUND_EXISTING_PATH="$ROOT_DIR/$LEVEL_DIRECTORY"
+            echo "flat 구조 감지 → 서브폴더 변환: $ROOT_DIR/$LEVEL/$PACKAGE_NAME"
+            mkdir -p "$ROOT_DIR/$LEVEL"
+            mv "$ROOT_DIR/$PACKAGE_NAME" "$ROOT_DIR/$LEVEL/"
+            FOUND_EXISTING_PATH="$ROOT_DIR/$LEVEL"
           fi
 
           # 기존 위치로 병합 이동
@@ -133,19 +114,15 @@ jobs:
             echo "→ 기존 디렉토리로 병합 이동: $DEST"
             cp -r "$PACKAGE_NAME"/* "$DEST"/
             rm -rf "$PACKAGE_NAME"
-
-          # 새로 이동해야 할 경우
           else
-            DEST="$ROOT_DIR/$LEVEL_DIRECTORY/$PACKAGE_NAME"
+            # 새로 이동
+            DEST="$ROOT_DIR/$LEVEL/$PACKAGE_NAME"
             echo "→ 새 디렉토리로 이동: $DEST"
-            mkdir -p "$ROOT_DIR/$LEVEL_DIRECTORY"
-            mv "$PACKAGE_NAME" "$ROOT_DIR/$LEVEL_DIRECTORY/"
+            mkdir -p "$ROOT_DIR/$LEVEL"
+            mv "$PACKAGE_NAME" "$ROOT_DIR/$LEVEL/"
           fi
 
-      - name: Commit and Push
-        env:
-          COMMIT_MSG: ${{ needs.detect.outputs.commit_msg }}
-        run: |
+          # 4. 커밋 및 푸시
           git config --global user.name gisu1102
           git config --global user.email gisu1102@gmail.com
 
