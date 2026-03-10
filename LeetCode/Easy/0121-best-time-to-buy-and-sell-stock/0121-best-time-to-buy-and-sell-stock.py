@@ -9,10 +9,9 @@ class Solution:
             if prices[left] < prices[right]:
                 profit = prices[right] -prices[left]
                 max_profit = max(profit, max_profit)
-                right += 1
             else :
                 left = right
-                right += 1
+            right += 1
         return max_profit
 
 
