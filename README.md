@@ -7,6 +7,7 @@ This is an auto push repository for Baekjoon Online Judge created with [Baekjoon
 |  |
 | ------- |
 | [0001-two-sum](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0001-two-sum) |
+| [0054-spiral-matrix](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0054-spiral-matrix) |
 | [0217-contains-duplicate](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0217-contains-duplicate) |
 | [0268-missing-number](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0268-missing-number) |
 | [0448-find-all-numbers-disappeared-in-an-array](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0448-find-all-numbers-disappeared-in-an-array) |
@@ -47,4 +48,12 @@ This is an auto push repository for Baekjoon Online Judge created with [Baekjoon
 |  |
 | ------- |
 | [1266-minimum-time-visiting-all-points](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/1266-minimum-time-visiting-all-points) |
+## Matrix
+|  |
+| ------- |
+| [0054-spiral-matrix](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0054-spiral-matrix) |
+## Simulation
+|  |
+| ------- |
+| [0054-spiral-matrix](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0054-spiral-matrix) |
 <!---LeetCode Topics End-->
