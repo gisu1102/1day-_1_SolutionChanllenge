@@ -20,7 +20,7 @@ class Solution:
 
         count = 0
         rows, columns = len(grid), len(grid[0])
-        directions = [[1,0], [-1,0], [0,-1], [0,1]] #상하좌우
+        directions = ((1, 0), (-1, 0), (0, -1), (0, 1)) #상하좌우
 
         def bfs(sr, sc):
             queue = deque()
@@ -31,7 +31,7 @@ class Solution:
                 r,c = queue.popleft()
                 for dr,dc in directions:
                     nr, nc = dr + r, dc + c
-                    if nr in range (rows) and nc in range (columns):
+                    if 0 <= nr < rows and 0 <= nc < columns:
                         if grid[nr][nc]=='1':
                             grid[nr][nc] = -1
                             queue.append((nr,nc))
