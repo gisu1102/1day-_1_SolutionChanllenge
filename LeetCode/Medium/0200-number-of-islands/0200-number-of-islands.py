@@ -18,29 +18,44 @@ class Solution:
         # 이동방향= 상하좌우
         # 종료조건 = 0, 더이상 이동불가
 
+        if not grid:
+            return 0
+
         count = 0
         rows, columns = len(grid), len(grid[0])
         directions = ((1, 0), (-1, 0), (0, -1), (0, 1)) #상하좌우
 
-        def bfs(sr, sc):
-            queue = deque()
-            queue.append((sr,sc))
-            grid[sr][sc] = -1
+        def dfs(r, c):
+            if r < 0 or r >= rows or c < 0 or c >= columns:
+                return
+            if grid[r][c] != '1':
+                return
 
-            while queue:
-                r,c = queue.popleft()
-                for dr,dc in directions:
-                    nr, nc = dr + r, dc + c
-                    if 0 <= nr < rows and 0 <= nc < columns:
-                        if grid[nr][nc]=='1':
-                            grid[nr][nc] = -1
-                            queue.append((nr,nc))
+            grid[r][c] = -1
+
+            for dr, dc in directions:
+                nr, nc = r+dr , c+dc
+                dfs(nr, nc)
+
+        # def bfs(sr, sc):
+        #     queue = deque()
+        #     queue.append((sr,sc))
+        #     grid[sr][sc] = -1
+
+        #     while queue:
+        #         r,c = queue.popleft()
+        #         for dr,dc in directions:
+        #             nr, nc = dr + r, dc + c
+        #             if 0 <= nr < rows and 0 <= nc < columns:
+        #                 if grid[nr][nc]=='1':
+        #                     grid[nr][nc] = -1
+        #                     queue.append((nr,nc))
 
         for r in range(rows):
             for c in range(columns):
                 if grid[r][c] == '1':
                     count += 1
-                    bfs(r,c)
+                    dfs(r,c)
         return count
 
 
