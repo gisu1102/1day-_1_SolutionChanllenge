@@ -13,6 +13,7 @@ This is an auto push repository for Baekjoon Online Judge created with [Baekjoon
 | [0217-contains-duplicate](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0217-contains-duplicate) |
 | [0268-missing-number](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0268-missing-number) |
 | [0448-find-all-numbers-disappeared-in-an-array](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0448-find-all-numbers-disappeared-in-an-array) |
+| [0977-squares-of-a-sorted-array](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0977-squares-of-a-sorted-array) |
 | [1266-minimum-time-visiting-all-points](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/1266-minimum-time-visiting-all-points) |
 | [1365-how-many-numbers-are-smaller-than-the-current-number](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/1365-how-many-numbers-are-smaller-than-the-current-number) |
 ## Hash Table
@@ -28,6 +29,7 @@ This is an auto push repository for Baekjoon Online Judge created with [Baekjoon
 | ------- |
 | [0217-contains-duplicate](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0217-contains-duplicate) |
 | [0268-missing-number](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0268-missing-number) |
+| [0977-squares-of-a-sorted-array](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0977-squares-of-a-sorted-array) |
 | [1365-how-many-numbers-are-smaller-than-the-current-number](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/1365-how-many-numbers-are-smaller-than-the-current-number) |
 ## Math
 |  |
@@ -75,4 +77,8 @@ This is an auto push repository for Baekjoon Online Judge created with [Baekjoon
 |  |
 | ------- |
 | [0121-best-time-to-buy-and-sell-stock](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0121-best-time-to-buy-and-sell-stock) |
+## Two Pointers
+|  |
+| ------- |
+| [0977-squares-of-a-sorted-array](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0977-squares-of-a-sorted-array) |
 <!---LeetCode Topics End-->
