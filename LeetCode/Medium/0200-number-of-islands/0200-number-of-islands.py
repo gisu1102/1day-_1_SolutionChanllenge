@@ -20,29 +20,63 @@ class Solution:
 
         count = 0
         rows, columns = len(grid), len(grid[0])
-        visited = set()
         directions = [[1,0], [-1,0], [0,-1], [0,1]] #상하좌우
 
         def bfs(sr, sc):
             queue = deque()
             queue.append((sr,sc))
-            visited.add((sr,sc))
+            grid[sr][sc] = -1
 
             while queue:
                 r,c = queue.popleft()
                 for dr,dc in directions:
                     nr, nc = dr + r, dc + c
                     if nr in range (rows) and nc in range (columns):
-                        if grid[nr][nc]=='1' and (nr,nc) not in visited:
-                            visited.add((nr,nc))
+                        if grid[nr][nc]=='1':
+                            grid[nr][nc] = -1
                             queue.append((nr,nc))
 
         for r in range(rows):
             for c in range(columns):
-                if grid[r][c] == '1' and (r,c) not in visited:
+                if grid[r][c] == '1':
                     count += 1
                     bfs(r,c)
         return count
+
+
+
+
+
+
+
+
+        #-----------------------#
+
+        # count = 0
+        # rows, columns = len(grid), len(grid[0])
+        # visited = set()
+        # directions = [[1,0], [-1,0], [0,-1], [0,1]] #상하좌우
+
+        # def bfs(sr, sc):
+        #     queue = deque()
+        #     queue.append((sr,sc))
+        #     visited.add((sr,sc))
+
+        #     while queue:
+        #         r,c = queue.popleft()
+        #         for dr,dc in directions:
+        #             nr, nc = dr + r, dc + c
+        #             if nr in range (rows) and nc in range (columns):
+        #                 if grid[nr][nc]=='1' and (nr,nc) not in visited:
+        #                     visited.add((nr,nc))
+        #                     queue.append((nr,nc))
+
+        # for r in range(rows):
+        #     for c in range(columns):
+        #         if grid[r][c] == '1' and (r,c) not in visited:
+        #             count += 1
+        #             bfs(r,c)
+        # return count
 
 
 
