@@ -25,17 +25,18 @@ class Solution:
         rows, columns = len(grid), len(grid[0])
         directions = ((1, 0), (-1, 0), (0, -1), (0, 1)) #상하좌우
 
-        def dfs(r, c):
-            if r < 0 or r >= rows or c < 0 or c >= columns:
-                return
-            if grid[r][c] != '1':
-                return
+        def dfs(sr, sc):
+            stack = [(sr,sc)]
+            grid[sr][sc] = -1
 
-            grid[r][c] = -1
+            while stack:
+                r, c = stack.pop()
 
-            for dr, dc in directions:
-                nr, nc = r+dr , c+dc
-                dfs(nr, nc)
+                for dr, dc in directions:
+                    nr, nc = r+dr , c+dc
+                    if 0 <= nr < rows and 0 <= nc < columns and grid[nr][nc] == '1':
+                        grid[nr][nc] = -1
+                        stack.append((nr,nc))
 
         # def bfs(sr, sc):
         #     queue = deque()
