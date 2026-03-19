@@ -12,6 +12,7 @@ This is an auto push repository for Baekjoon Online Judge created with [Baekjoon
 | [0121-best-time-to-buy-and-sell-stock](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0121-best-time-to-buy-and-sell-stock) |
 | [0200-number-of-islands](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0200-number-of-islands) |
 | [0217-contains-duplicate](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0217-contains-duplicate) |
+| [0219-contains-duplicate-ii](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0219-contains-duplicate-ii) |
 | [0268-missing-number](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0268-missing-number) |
 | [0448-find-all-numbers-disappeared-in-an-array](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0448-find-all-numbers-disappeared-in-an-array) |
 | [0845-longest-mountain-in-array](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0845-longest-mountain-in-array) |
@@ -23,6 +24,7 @@ This is an auto push repository for Baekjoon Online Judge created with [Baekjoon
 | ------- |
 | [0001-two-sum](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0001-two-sum) |
 | [0217-contains-duplicate](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0217-contains-duplicate) |
+| [0219-contains-duplicate-ii](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0219-contains-duplicate-ii) |
 | [0268-missing-number](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0268-missing-number) |
 | [0448-find-all-numbers-disappeared-in-an-array](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0448-find-all-numbers-disappeared-in-an-array) |
 | [1365-how-many-numbers-are-smaller-than-the-current-number](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/1365-how-many-numbers-are-smaller-than-the-current-number) |
@@ -91,4 +93,8 @@ This is an auto push repository for Baekjoon Online Judge created with [Baekjoon
 |  |
 | ------- |
 | [0845-longest-mountain-in-array](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0845-longest-mountain-in-array) |
+## Sliding Window
+|  |
+| ------- |
+| [0219-contains-duplicate-ii](https://github.com/gisu1102/1day-_1_SolutionChanllenge/tree/master/0219-contains-duplicate-ii) |
 <!---LeetCode Topics End-->
