@@ -23,6 +23,9 @@ class Solution:
             if (idx>0) and (num == sorted_nums[idx-1]):
                 continue
 
+            if num > 0:
+                break
+
             left = idx+1
             right = len(sorted_nums)-1
 
