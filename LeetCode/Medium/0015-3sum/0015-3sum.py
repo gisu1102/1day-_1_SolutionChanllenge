@@ -40,10 +40,11 @@ class Solution:
                 else: #정답을 찾은경우
                     res.append([num, left_num, right_num])
                     left += 1
+                    right -= 1
 
                     while left < right and sorted_nums[left] == sorted_nums[left - 1]:
                         left += 1
-                    while left < right and sorted_nums[right] == sorted_nums[right - 1]:
+                    while left < right and sorted_nums[right] == sorted_nums[right + 1]:
                         right -= 1    
         return res
 
